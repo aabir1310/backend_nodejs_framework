@@ -2,10 +2,10 @@
 
 #platform
 NODE_ENV,Typescript
-Node version >7
+Node version >22.11.0
 Git
 
-# DCM HUB DEV REQUEST MANAGEMENT:
+#EVIAN BACKEND :
 
-# This  Microservice is to serve all functionalities of the Request Management Module of CX HUB.
+# This  Microservice is to serve all functionalities of Evian Backend.
 
