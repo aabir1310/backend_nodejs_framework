@@ -1,0 +1,104 @@
+import 'reflect-metadata';
+import { interfaces, InversifyExpressServer, TYPE } from 'inversify-express-utils';
+import { Container } from 'inversify';
+import * as bodyParser from 'body-parser';
+import helmet from "helmet";
+import * as useragent from 'express-useragent';
+import * as compression from 'compression';
+import * as cors from 'cors';
+import * as cookieParser from 'cookie-parser';
+const multer = require('multer');
+const path = require('path');
+import { AppDataSource}  from './config/data-source'
+
+
+
+import TYPES from './constant/Types';
+
+import  './controller/Chat_App_Controller';
+import { Chat_App_Service } from './service/Chat_App_Service';
+import { Chat_App_Repository } from './repository/Chat_App_Repository';
+import { Chat_App_Exception } from './exception/Chat_App_Exception';
+
+
+//create container instance
+let container = new Container();
+
+container.bind<Chat_App_Service>(TYPES.Chat_App_Service).to(Chat_App_Service);
+container.bind<Chat_App_Repository>(TYPES.Chat_App_Repository).to(Chat_App_Repository);
+// Initialize the server
+let server = new InversifyExpressServer(container);
+
+const storage = multer.memoryStorage();
+const fileFilter = (req, file, cb) => {
+    const ext = path.extname(file.originalname).toLowerCase();
+    if (ext === '.xlsx' || ext === '.pdf'|| ext === '.mp4') {
+        cb(null, true);
+    } else {
+        cb(new Error('File format not supported'), false);
+    }
+}
+const upload = multer({
+    storage: storage,
+    fileFilter: fileFilter,
+    limits: {
+        files: 25
+    }
+});
+//Initialize the database connection
+AppDataSource.initialize()
+    .then(() => {
+        console.log("Database connected!");
+    })
+    .catch((err) => console.error("Database connection error:", err));
+//set middleware in server configuration
+server.setConfig((app) => {
+    app.use(compression());
+    app.use(helmet());
+    app.use(bodyParser.json({ limit: "25mb" }));
+    app.use(bodyParser.urlencoded({ limit: "25mb", extended: true }));
+    app.use(useragent.express());
+    app.use(cookieParser());
+    app.use(upload.fields([{ name: 'file', maxCount: 1 }]));//multer middleware for asset upload api
+    //handle cors for request
+    app.use(cors());
+    app.use(cookieParser());
+    app.use(function (req, res, next) {
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Headers", "X-Requested-With,Content-Type");
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+        next();
+    });
+});
+
+
+
+//Centralized Exception Handling 
+server.setErrorConfig((app) => {
+    app.use((err, req, res, next) => {
+        console.log("server.ts",err);
+        res.status(500).send(Chat_App_Exception.handleError(err, req.originalUrl));
+    });
+});
+
+process.on('uncaughtException', (err) => {
+    // console.log('uncaughtException',err);
+    Chat_App_Exception.handleError(err, '/api/v1.0/uncaughtException');
+});
+
+process.on('unhandledRejection', (err) => {
+    // console.log('unhandledRejection',err);
+    Chat_App_Exception.handleError(err, '/api/v1.0/unhandledRejection');
+});
+
+process.on('rejectionHandled', (err) => {
+    // console.log('rejectionHandled',err);
+    Chat_App_Exception.handleError(err, '/api/v1.0/rejectionHandled');
+});
+
+// salesforceClientInstance.oauthLogin();
+
+let app = server.build();
+app.listen(process.env.VCAP_APP_PORT || 8080);  //port allocation and server is listenning on this port
+console.log("Server Starting on : http://localhost:" + (process.env.VCAP_APP_PORT || 8080));
+exports = module.exports = app;
