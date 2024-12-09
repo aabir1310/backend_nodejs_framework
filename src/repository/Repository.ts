@@ -8,7 +8,7 @@ import {AppDataSource} from '../config/data-source'
 export class repository {
     private UserRepository = AppDataSource.getRepository(User);
   //  private mongoDb: Db;
-    private postgresDb: IDatabase<any>;
+   // private postgresDb: IDatabase<any>;
 
     constructor() {
         // MongoDBClient.getMongoConnection(async (connection) => {

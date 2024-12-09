@@ -20,11 +20,16 @@ export class User{
     @Column()
     passwordHash :string;
 
+    @Column({unique:true})
+     phone:string
+
     @CreateDateColumn()
     createdAt :Date;
 
     @UpdateDateColumn()
     updatedAt:Date;
+
+
 
 
 

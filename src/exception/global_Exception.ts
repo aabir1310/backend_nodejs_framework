@@ -23,4 +23,11 @@ export class globalException {
           message : "Something broken"
         };
     }
+    public static sendErrorResponse(err) {
+        return {
+            status: 'false',
+            code: 500,
+            message: err.message
+        }
+    }
 }

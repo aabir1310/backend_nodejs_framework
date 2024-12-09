@@ -6,6 +6,8 @@ const { v4: uuidv4 } = require('uuid');
 import { repository } from '../repository/Repository';
 import {AppDataSource} from '../config/data-source'
 import {User} from '../entities/users'
+import { sendOtp } from '../utility/external_apis';
+
 
 
 @injectable()
@@ -17,9 +19,13 @@ export class Service {
    
   public async addUser(request:Request,response: Response ){
     const getUserData=request.body;
+    console.log(getUserData.phone)
 
-    const user =await this.chatAppRepo.addUser(getUserData)
+    const user =await this.chatAppRepo.addUser(getUserData);
+    await sendOtp(getUserData.phone)
+
   return response.status(200).send({
+    
     "message": "User Created "
   })
     

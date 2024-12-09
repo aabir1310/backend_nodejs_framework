@@ -4,9 +4,9 @@ import { Container } from 'inversify';
 import * as bodyParser from 'body-parser';
 import helmet from "helmet";
 import * as useragent from 'express-useragent';
-import * as compression from 'compression';
-import * as cors from 'cors';
-import * as cookieParser from 'cookie-parser';
+import   compression from 'compression';
+import  cors from 'cors';
+import  cookieParser from 'cookie-parser';
 const multer = require('multer');
 const path = require('path');
 import { AppDataSource}  from './config/data-source'
