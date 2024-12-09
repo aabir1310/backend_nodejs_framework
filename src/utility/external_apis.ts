@@ -53,12 +53,13 @@ export async function sendOtp(mobileNumber){
     const messagingServiceSid = process.env.MESSAGING_SERVICE_SID;
    console.log("hihihih",accountSid,authToken,messagingServiceSid,otp,mobileNumber)
     const client=twilio(accountSid,authToken);
+    
     try{
         console.log("iam here ")
         const message=await client.messages.create({
             body: `Your OTP is: ${otp}`,
             //messagingServiceSid,
-            to: '+917985201218',
+            to: `+91${mobileNumber}`,
             from:'+17756307074'
         });
        console.log(message,"______________")
