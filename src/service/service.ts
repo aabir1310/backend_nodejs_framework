@@ -19,10 +19,12 @@ export class Service {
    
   public async addUser(request:Request,response: Response ){
     const getUserData=request.body;
-    console.log(getUserData.phone)
-
+    console.log(getUserData.username)
+    //await sendOtp(getUserData.phone)
     const user =await this.chatAppRepo.addUser(getUserData);
-    await sendOtp(getUserData.phone)
+    const a = await sendOtp(getUserData.phone,getUserData.username)
+    console.log("OTP FROM EX",a)
+    await this.chatAppRepo.addOtp(getUserData.username,a)
 
   return response.status(200).send({
     
@@ -61,6 +63,22 @@ export class Service {
   });
     
   }
+
+  public async verifyOtp(request:Request,response: Response){
+    const data=request.query
+    console.log("****",data,"****")
+    const otp=await this.chatAppRepo.verifyOtp(data.number,data.otp)
+    console.log(otp ,"is this ")
+    if (data.otp === otp.Otp){
+     return  response.send({
+        "message":"OTP Verified sucessfully"
+      })
+    }else{
+      return response.send({
+        "message":"OTP Not correct"
+      })
+    }
+}
 
 
   

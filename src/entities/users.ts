@@ -1,33 +1,39 @@
-import { Entity, Column,PrimaryGeneratedColumn,UpdateDateColumn, CreateDateColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, UpdateDateColumn, CreateDateColumn, Index } from "typeorm";
 
 @Entity("users")
-export class User{
+@Index("IDX_Mobile", ["phone"])
+export class User {
     @PrimaryGeneratedColumn("increment")
-    id:number;
+    id: number;
 
-    @Column({unique:true})
-    username:string;
-
-    @Column()
-    firstname :string;
+    @Column({ unique: true })
+    username: string;
 
     @Column()
-    lastname :string;
+    firstname: string;
 
     @Column()
-    email :string;
+    lastname: string;
 
     @Column()
-    passwordHash :string;
+    email: string;
 
-    @Column({unique:true})
-     phone:string
+    @Column()
+    passwordHash: string;
+
+    @Column({ unique: true })
+    phone: string;
+
+    @Column({nullable:true})
+    Otp: string;
 
     @CreateDateColumn()
-    createdAt :Date;
+    createdAt: Date;
 
     @UpdateDateColumn()
-    updatedAt:Date;
+    updatedAt: Date;
+
+
 
 
 

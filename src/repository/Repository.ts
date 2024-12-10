@@ -48,6 +48,19 @@ export class repository {
 
     }
 
+    public async addOtp(username,otp){
+        await this.UserRepository.update({ username }, { Otp:otp });
+
+    }
+    public async verifyOtp(number,otp){
+      const res=  await this.UserRepository.findOne({
+            where:{phone:number},
+            select:["Otp"]
+        })
+        return res;
+
+    }
+
 
 
 

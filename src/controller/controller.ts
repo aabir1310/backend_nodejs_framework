@@ -41,6 +41,12 @@ export class Controller {
       return this.chatAppService.deleteUser(request, response);
     
     }
+  @httpGet('/verifyOtp')
+  public async verifyOtp(request:Request,response:Response)
+  {
+    return this.chatAppService.verifyOtp(request,response)
+  }
+
 
 
 

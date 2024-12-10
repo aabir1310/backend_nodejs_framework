@@ -46,14 +46,14 @@ import { globalException } from '../exception/global_Exception';
 
 // Load environment variables from .env file
 dotenv.config();
-export async function sendOtp(mobileNumber){
+export async function sendOtp(mobileNumber,username) {
     const otp = Math.floor(100000 + Math.random() * 900000);
     const accountSid = process.env.ACCOUNT_SID
     const authToken = process.env.AUTH_TOKEN
     const messagingServiceSid = process.env.MESSAGING_SERVICE_SID;
-   console.log("hihihih",accountSid,authToken,messagingServiceSid,otp,mobileNumber)
+  // console.log("hihihih",accountSid,authToken,messagingServiceSid,otp,mobileNumber)
     const client=twilio(accountSid,authToken);
-    
+    console.log("CHECKING WHATS WRONG",mobileNumber,username)
     try{
         console.log("iam here ")
         const message=await client.messages.create({
@@ -62,9 +62,11 @@ export async function sendOtp(mobileNumber){
             to: `+91${mobileNumber}`,
             from:'+17756307074'
         });
-       console.log(message,"______________")
+        console.log(message)
         console.log(`OTP sent successfully to ${mobileNumber}. Message SID: ${message.sid}`);
-        return message.sid;
+
+
+        return otp;
 
     }catch(error){
         console.log("Otp Error ", error,mobileNumber)
